@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService } from '../services/data.service'
 
@@ -16,9 +16,11 @@ export class RegisterComponent implements OnInit {
 
 //form group: should be above constructor
 registerForm=this.fb.group({ //user input cheyyunna details empty array aayi declare cheyyanam
- acno:'',
- pswd:'',
- uname:''                          
+   
+  acno:[''],
+ pswd:[''],
+ uname:['',[Validators.required,Validators.pattern('[a-zA-Z ]*')]] //* means more than one alphabets and numbers kodukkaam 
+                        
 })
 
 
@@ -28,15 +30,30 @@ registerForm=this.fb.group({ //user input cheyyunna details empty array aayi dec
   }
 
   register(){
-    var uname=this.uname
-    var acno=this.acno
-    var pswd=this.pswd
- let result=this.ds.register(uname,acno,pswd)
-if(result){
-alert("successfully registered")
+  
+    var uname=this.registerForm.value.uname
+    var acno=this.registerForm.value.acno
+    var pswd=this.registerForm.value.pswd
+
+if(this,this.registerForm.get("uname")?.errors)   {
+  alert("invalid username")
+} 
+
+if(this.registerForm.valid){
+  const result=this.ds.register(uname,acno,pswd)
+
+  if(result){
+ alert("successfully registered")
+ this.router.navigateByUrl("")
+ }
+ else{
+   alert("already existing customer.Please login")
+   this.router.navigateByUrl("")
+ }
+ 
 }
 else{
-  alert("already existing customer")
+  alert("invalid credentials")
 }
 }
 }
